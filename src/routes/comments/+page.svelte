@@ -1,6 +1,15 @@
 <script lang="ts">
 	import Input from '@components/elements/input.svelte';
 	import Card from '@components/elements/card.svelte';
+	import { addComment, useComments } from '$lib/comment';
+
+	const comments = useComments('test-post-id');
+	let message: string;
+
+	const submitComment = async () => {
+		await addComment(message);
+		message = '';
+	};
 </script>
 
 <div class="my-5 flex items-center justify-center">
@@ -14,14 +23,24 @@
 			Nunc volutpat lorem et justo facilisis, a vehicula sapien fermentum. Sed auctor, dolor at volutpat
 			vulputate, elit nisl ultricies ligula, at vehicula libero ex id urna. Phasellus ut orci sit amet
 			libero porttitor interdum ac a elit. Vestibulum ac ligula non libero sodales dictum. Cras ut sapien
-			nec libero convallis efficitur. Loading...
+			nec libero convallis efficitur. 
 		</Card>
 
 		<h1 class="my-5 mb-4 text-2xl font-bold">Comments</h1>
-		<Card class="my-5"></Card>
-		<Input placeholder="Say something..." name="comment" />
-		<button type="submit" class="my-5 w-fit rounded-lg border bg-blue-600 p-3 font-semibold text-white">
-			Comment
-		</button>
+
+		{#each $comments as comment}
+			<Card class="my-5">
+				{comment.message}
+			</Card>
+		{/each}
+		<form on:submit|preventDefault={submitComment}>
+			<Input placeholder="Say something..." name="comment" bind:value={message} />
+			<button
+				type="submit"
+				class="my-5 w-fit rounded-lg border bg-blue-600 p-3 font-semibold text-white"
+			>
+				Comment
+			</button>
+		</form>
 	</div>
 </div>

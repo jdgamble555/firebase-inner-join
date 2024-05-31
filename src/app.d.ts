@@ -9,6 +9,16 @@ declare global {
 		email: string | null;
 	};
 
+	type CommentType = {
+		message: string;
+		postId: string;
+		createdBy: {
+			uid: string,
+			displayName: string
+		};
+		createdAt: Date;
+	};
+
 	namespace App {
 		// interface Error {}
 		// interface Locals {}
