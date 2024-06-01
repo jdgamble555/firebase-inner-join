@@ -1,4 +1,8 @@
-import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import {
+    onDocumentCreated,
+    onDocumentDeleted,
+    onDocumentUpdated
+} from 'firebase-functions/v2/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { initializeApp } from 'firebase-admin/app';
 
@@ -7,7 +11,9 @@ initializeApp();
 const adminAuth = getAuth();
 
 export const deleteUser = onDocumentDeleted(
-    'users/{docId}',
+    {
+        document: 'users/{docId}'
+    },
     async (event) => {
 
         const eventData = event.data;
@@ -70,12 +76,12 @@ export const createComment = onDocumentCreated(
         const { displayName, photoURL } = await adminAuth.getUser(docData.createdBy.uid);
 
         if (docData.displayName !== displayName || docData.photoURL !== photoURL) {
-            return eventData.ref.update({
+            return eventData.ref.set({
                 createdBy: {
                     displayName,
                     photoURL
                 }
-            });
+            }, { merge: true });
         }
 
         return event;

@@ -17,19 +17,23 @@
 <div class="my-5 flex items-center justify-center">
 	<div class="w-3/4 max-w-3xl">
 		<h1 class="my-5 mb-4 text-2xl font-bold">Comments</h1>
-		{#each $comments as comment}
-			<Card class="my-5">
-				<p class="mb-5 flex gap-3 font-semibold">
-					<Circle />{comment.createdBy.displayName} on {comment.createdAt.toDateString()} at {comment.createdAt.toLocaleTimeString()}
-				</p>
-				{comment.message}
-				<div class="flex justify-end">
-					<button type="button" on:click={() => deleteComment(comment.commentId)}>
-						<Trash size="20" />
-					</button>
-				</div>
-			</Card>
-		{/each}
+		{#if $comments?.length}
+			{#each $comments as comment}
+				<Card class="my-5">
+					<p class="mb-5 flex gap-3 font-semibold">
+						<Circle />{comment.createdBy.displayName} on {comment.createdAt.toDateString()} at {comment.createdAt.toLocaleTimeString()}
+					</p>
+					{comment.message}
+					<div class="flex justify-end">
+						<button type="button" on:click={() => deleteComment(comment.commentId)}>
+							<Trash size="20" />
+						</button>
+					</div>
+				</Card>
+			{/each}
+		{:else}
+			<p class="my-5">There are no comments yet!</p>
+		{/if}
 		<form on:submit|preventDefault={submitComment}>
 			<Input placeholder="Say something..." name="comment" bind:value={message} />
 			<button

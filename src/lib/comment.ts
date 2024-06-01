@@ -7,10 +7,12 @@ import {
     onSnapshot,
     orderBy,
     query,
-    serverTimestamp
+    serverTimestamp,
+    where
 } from "firebase/firestore";
 import { auth, db } from "./firebase";
-import { readable } from "svelte/store";
+import { derived, type Readable } from "svelte/store";
+import { useUser } from "./use-user";
 
 export const addComment = async (message: string) => {
 
@@ -30,10 +32,21 @@ export const addComment = async (message: string) => {
 };
 
 export const useComments = () => {
-    return readable<CommentType[]>([], set => {
+
+    const user = useUser();
+
+    return derived<
+        Readable<UserType | null>,
+        CommentType[]
+    >(user, ($user, set) => {
+        if (!$user) {
+            set([]);
+            return;
+        }
         return onSnapshot(
             query(
                 collection(db, 'comments'),
+                where('createdBy.uid', '==', $user.uid),
                 orderBy('createdAt', 'desc')
             ),
             (snap) => {
@@ -55,6 +68,9 @@ export const useComments = () => {
                         createdAt: createdAt.toDate()
                     };
                 }) as CommentType[];
+
+                console.log(comments);
+
                 set(comments);
             }
         );
