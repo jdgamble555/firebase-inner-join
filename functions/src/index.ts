@@ -10,10 +10,8 @@ initializeApp();
 
 const adminAuth = getAuth();
 
-export const deleteUser = onDocumentDeleted(
-    {
-        document: 'users/{docId}'
-    },
+export const deleteProfile = onDocumentDeleted(
+    { document: 'profiles/{docId}' },
     async (event) => {
 
         const eventData = event.data;

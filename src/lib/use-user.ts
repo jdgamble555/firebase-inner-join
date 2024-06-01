@@ -3,6 +3,7 @@ import {
     onIdTokenChanged,
     signInWithPopup,
     signOut,
+    updateProfile,
     type User
 } from "firebase/auth";
 import { readable, type Subscriber } from "svelte/store";
@@ -80,6 +81,14 @@ export const updateUser = async (
             displayName,
             photoURL
         });
+
+        // Trigger function handles this as fallback
+        // but we need to update our session immediately
+        await updateProfile(auth.currentUser, {
+            displayName,
+            photoURL
+        });
+
     } catch (e) {
         if (e instanceof FirebaseError) {
             return {

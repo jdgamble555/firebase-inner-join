@@ -13,6 +13,7 @@ import {
 import { auth, db } from "./firebase";
 import { derived, type Readable } from "svelte/store";
 import { useUser } from "./use-user";
+import { dev } from "$app/environment";
 
 export const addComment = async (message: string) => {
 
@@ -69,7 +70,9 @@ export const useComments = () => {
                     };
                 }) as CommentType[];
 
-                console.log(comments);
+                if (dev) {
+                    console.log(comments);
+                }
 
                 set(comments);
             }
