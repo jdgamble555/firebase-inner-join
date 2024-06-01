@@ -3,7 +3,7 @@
 declare global {
 
 	type UserType = {
-		displayName: string | null
+		displayName: string | null;
 		photoURL: string | null;
 		uid: string;
 		email: string | null;
@@ -14,8 +14,9 @@ declare global {
 		message: string;
 		postId: string;
 		createdBy: {
-			uid: string,
-			displayName: string
+			uid: string;
+			displayName: string;
+			photoURL: string;
 		};
 		createdAt: Date;
 	};

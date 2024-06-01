@@ -21,7 +21,16 @@
 			{#each $comments as comment}
 				<Card class="my-5">
 					<p class="mb-5 flex gap-3 font-semibold">
-						<Circle />{comment.createdBy.displayName} on {comment.createdAt.toDateString()} at {comment.createdAt.toLocaleTimeString()}
+						{#if comment.createdBy.photoURL}
+							<img
+								class="h-6 w-6 rounded-full"
+								src={comment.createdBy.photoURL}
+								alt={comment.createdBy.displayName}
+							/>
+						{:else}
+							<Circle />
+						{/if}
+						{comment.createdBy.displayName} on {comment.createdAt.toDateString()} at {comment.createdAt.toLocaleTimeString()}
 					</p>
 					{comment.message}
 					<div class="flex justify-end">
