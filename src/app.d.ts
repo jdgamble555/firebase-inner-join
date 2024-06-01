@@ -10,6 +10,7 @@ declare global {
 	};
 
 	type CommentType = {
+		commentId: string;
 		message: string;
 		postId: string;
 		createdBy: {

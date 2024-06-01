@@ -1,4 +1,5 @@
 import {
+    Timestamp,
     addDoc,
     collection,
     deleteDoc,
@@ -6,8 +7,7 @@ import {
     onSnapshot,
     orderBy,
     query,
-    serverTimestamp,
-    where
+    serverTimestamp
 } from "firebase/firestore";
 import { auth, db } from "./firebase";
 import { readable } from "svelte/store";
@@ -20,21 +20,20 @@ export const addComment = async (message: string) => {
 
     await addDoc(collection(db, 'comments'), {
         message,
-        postId: 'test-post-id',
         createdBy: {
             uid: auth.currentUser.uid,
-            displayName: auth.currentUser.displayName
+            displayName: auth.currentUser.displayName,
+            photoURL: auth.currentUser.photoURL
         },
         createdAt: serverTimestamp()
     });
 };
 
-export const useComments = (postId: string) => {
+export const useComments = () => {
     return readable<CommentType[]>([], set => {
         return onSnapshot(
             query(
                 collection(db, 'comments'),
-                where('postId', '==', postId),
                 orderBy('createdAt', 'desc')
             ),
             (snap) => {
@@ -42,9 +41,20 @@ export const useComments = (postId: string) => {
                     set([]);
                     return;
                 }
-                const comments = snap.docs.map(doc => doc.data({
-                    serverTimestamps: 'estimate'
-                })) as CommentType[];
+                const comments = snap.docs.map(doc => {
+
+                    const data = doc.data({
+                        serverTimestamps: 'estimate'
+                    });
+
+                    const createdAt = data.createdAt as Timestamp;
+
+                    return {
+                        commentId: doc.id,
+                        ...data,
+                        createdAt: createdAt.toDate()
+                    };
+                }) as CommentType[];
                 set(comments);
             }
         );
@@ -52,5 +62,7 @@ export const useComments = (postId: string) => {
 };
 
 export const deleteComment = async (id: string) => {
-    await deleteDoc(doc(db, 'comments', id));
+    await deleteDoc(
+        doc(db, 'comments', id)
+    );
 };

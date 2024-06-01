@@ -25,7 +25,10 @@ module.exports = {
     "@typescript-eslint",
     "import",
   ],
+  files: ['**/*.ts','**/*.js'],
   rules: {
+    "no-trailing-spaces": ['error', 'never'],
+    "padded-blocks": ["error", "never"],
     "quotes": ["error", "single"],
     'object-curly-spacing': ['error', 'always'],
     "import/no-unresolved": 0,

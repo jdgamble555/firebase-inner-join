@@ -1,9 +1,11 @@
 <script lang="ts">
 	import Input from '@components/elements/input.svelte';
 	import Card from '@components/elements/card.svelte';
-	import { addComment, useComments } from '$lib/comment';
+	import { addComment, deleteComment, useComments } from '$lib/comment';
+	import Trash from 'lucide-svelte/icons/trash-2';
+	import Circle from 'lucide-svelte/icons/circle-user-round';
 
-	const comments = useComments('test-post-id');
+	const comments = useComments();
 	let message: string;
 
 	const submitComment = async () => {
@@ -13,24 +15,19 @@
 </script>
 
 <div class="my-5 flex items-center justify-center">
-	<div class="max-w-3xl">
-		<Card>
-			<h1 class="mb-4 text-3xl font-bold">Titulus Articuli</h1>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum orci nec massa dictum,
-			sed vehicula nunc convallis. Fusce ac semper augue. Suspendisse potenti. Vivamus vitae purus at
-			arcu gravida ultricies. Ut non urna vitae risus luctus vulputate. Morbi a vestibulum nulla. Nulla
-			facilisi. Proin sed metus sit amet velit vehicula tristique. Sed ut leo eget nisl fermentum consequat.
-			Nunc volutpat lorem et justo facilisis, a vehicula sapien fermentum. Sed auctor, dolor at volutpat
-			vulputate, elit nisl ultricies ligula, at vehicula libero ex id urna. Phasellus ut orci sit amet
-			libero porttitor interdum ac a elit. Vestibulum ac ligula non libero sodales dictum. Cras ut sapien
-			nec libero convallis efficitur. 
-		</Card>
-
+	<div class="w-3/4 max-w-3xl">
 		<h1 class="my-5 mb-4 text-2xl font-bold">Comments</h1>
-
 		{#each $comments as comment}
 			<Card class="my-5">
+				<p class="mb-5 flex gap-3 font-semibold">
+					<Circle />{comment.createdBy.displayName} on {comment.createdAt.toDateString()} at {comment.createdAt.toLocaleTimeString()}
+				</p>
 				{comment.message}
+				<div class="flex justify-end">
+					<button type="button" on:click={() => deleteComment(comment.commentId)}>
+						<Trash size="20" />
+					</button>
+				</div>
 			</Card>
 		{/each}
 		<form on:submit|preventDefault={submitComment}>

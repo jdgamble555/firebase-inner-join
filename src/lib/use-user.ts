@@ -3,17 +3,17 @@ import {
     onIdTokenChanged,
     signInWithPopup,
     signOut,
-    updateProfile,
     type User
 } from "firebase/auth";
 import { readable, type Subscriber } from "svelte/store";
 import { auth, db } from "./firebase";
 import { useSharedStore } from "./use-shared";
 import { FirebaseError } from "firebase/app";
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 
 export const loginWithGoogle = async () =>
     await signInWithPopup(auth, new GoogleAuthProvider());
+
 export const logout = async () => await signOut(auth);
 
 const createUserDoc = async (user: UserType) => {
@@ -25,7 +25,6 @@ const createUserDoc = async (user: UserType) => {
 
     // create one if DNE
     if (!userDoc.exists()) {
-        console.log('about to create...');
         await setDoc(doc(db, 'profiles', user.uid), {
             displayName: user.displayName,
             photoURL: user.photoURL,
@@ -76,7 +75,8 @@ export const updateUser = async (
         };
     }
     try {
-        await updateProfile(auth.currentUser, {
+        await updateDoc(
+            doc(db, 'profiles', auth.currentUser.uid), {
             displayName,
             photoURL
         });
